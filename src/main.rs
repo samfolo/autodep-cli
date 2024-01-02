@@ -1,7 +1,10 @@
-mod cli;
-mod config;
-mod parsers;
+pub mod cli;
+pub mod config;
+pub mod parsers;
+
+use cli::AutodepCLI;
 
 fn main() {
-    println!("Hello, world!");
+    let cli = AutodepCLI::new();
+    cli.launch();
 }
