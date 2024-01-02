@@ -54,14 +54,6 @@ The tool aims to provide an automated way to handle dependency management in Nod
 - `rustpython-parser` for parsing Python-like Please build files
 - `swc` for parsing JavaScript/TypeScript
 
-## Contributions
-
-Contributions are welcome. Please feel free to fork, modify, and make pull requests or open issues for any improvements or bug fixes.
-
-## License
-
-[Add your chosen License here]
-
 ## Author
 
-[Your Name]
+Sam Folorunsho
