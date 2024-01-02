@@ -1,49 +1,46 @@
-use clap::Arg;
-
-pub enum Argument {
-    Flag(&'static str, Option<char>, &'static str),
-    Unary(&'static str, Option<char>, &'static str, bool),
-    Unbounded(&'static str, Option<char>, &'static str, bool),
+#[macro_export]
+macro_rules! flag {
+    ($name:expr, $short:expr, $help:expr) => {
+        Arg::new($name)
+            .long($name)
+            .short($short)
+            .help($help)
+            .action(clap::ArgAction::SetTrue)
+            .num_args(0)
+    };
+    ($name:expr, $help:expr) => {
+        Arg::new($name)
+            .long($name)
+            .help($help)
+            .action(clap::ArgAction::SetTrue)
+            .num_args(0)
+    };
 }
 
-impl From<Argument> for Arg {
-    fn from(flag: Argument) -> Self {
-        match flag {
-            Argument::Flag(name, short_name, description) => {
-                let mut arg = Arg::new(name).long(name).num_args(0).help(description);
+#[macro_export]
+macro_rules! unary {
+    ($name:expr, $short:expr, $help:expr) => {
+        Arg::new($name)
+            .long($name)
+            .short($short)
+            .help($help)
+            .num_args(1)
+    };
+    ($name:expr, $help:expr) => {
+        Arg::new($name).long($name).help($help).num_args(1)
+    };
+}
 
-                if let Some(short_name) = short_name {
-                    arg = arg.short(short_name);
-                }
-
-                return arg;
-            }
-            Argument::Unary(name, short_name, description, required) => {
-                let mut arg = Arg::new(name)
-                    .long(name)
-                    .required(required)
-                    .num_args(1)
-                    .help(description);
-
-                if let Some(short_name) = short_name {
-                    arg = arg.short(short_name);
-                }
-
-                return arg;
-            }
-            Argument::Unbounded(name, short_name, description, required) => {
-                let mut arg = Arg::new(name)
-                    .long(name)
-                    .required(required)
-                    .num_args(1)
-                    .help(description);
-
-                if let Some(short_name) = short_name {
-                    arg = arg.short(short_name);
-                }
-
-                return arg;
-            }
-        }
-    }
+#[macro_export]
+macro_rules! unbounded {
+    ($name:expr, $short:expr, $help:expr) => {
+        Arg::new($name)
+            .long($name)
+            .short($short)
+            .help($help)
+            .num_args(1..)
+    };
+    ($name:expr, $help:expr) => {
+        Arg::new($name).long($name).help($help).num_args(1..)
+    };
 }

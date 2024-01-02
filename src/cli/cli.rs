@@ -1,46 +1,28 @@
 use clap::{crate_version, Arg, Command};
 
-use super::{args::Argument, subcommands};
+use crate::{cli::subcommands, flag};
 
-pub struct AutodepCLI;
+pub struct AutodepCli;
 
-impl AutodepCLI {
+impl AutodepCli {
     pub fn new() -> Self {
-        AutodepCLI
+        AutodepCli
     }
 
     pub fn launch(&self) -> clap::ArgMatches {
         Command::new("autodep")
+            .bin_name("autodep")
             .version(crate_version!())
             .author("Sam Folorunsho")
             .about("A command line application for managing dependencies in monorepos")
-            .arg(
-                Arg::new("verbose")
-                    .long("verbose")
-                    .short('v')
-                    .global(true)
-                    .num_args(0)
-                    .help("Enables verbose output"),
-            )
-            .arg(
-                Arg::new("silent")
-                    .long("silent")
-                    .short('s')
-                    .global(true)
-                    .num_args(0)
-                    .help("Disables all output"),
-            )
-            .arg(Arg::from(Argument::Unary(
-                "config",
-                Some('c'),
-                "The config to use with autodep",
-                false,
-            )))
-            .subcommand(subcommands::print_subcommand())
-            .subcommand(subcommands::run_subcommand())
-            .subcommand(subcommands::probe_subcommand())
-            .subcommand(subcommands::untangle_subcommand())
-            .subcommand(subcommands::prune_subcommand())
+            .subcommand(subcommands::print())
+            .subcommand(subcommands::run())
+            .subcommand(subcommands::probe())
+            .subcommand(subcommands::untangle())
+            .subcommand(subcommands::prune())
+            .arg(flag!("verbose", 'v', "Enables verbose output").conflicts_with("silent"))
+            .arg(flag!("silent", 's', "Disables all output").conflicts_with("verbose"))
+            .arg(flag!("config", 'c', "The config to use with autodep"))
             .get_matches()
     }
 }

@@ -2,9 +2,9 @@ pub mod cli;
 pub mod config;
 pub mod parsers;
 
-use cli::AutodepCLI;
+use cli::AutodepCli;
 
 fn main() {
-    let cli = AutodepCLI::new();
+    let cli = AutodepCli::new();
     cli.launch();
 }

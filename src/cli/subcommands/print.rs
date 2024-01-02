@@ -1,62 +1,73 @@
 use clap::{Arg, ArgGroup, Command};
 
-use crate::cli::{
-    args::Argument,
-    common::{new_target_arg, new_targets_arg},
-};
+use crate::{flag, unary, unbounded};
 
-pub fn print_subcommand() -> Command {
+pub fn print() -> Command {
     Command::new("print")
-        .about("Print to stdout")
-        .subcommand(print_imports_subcommand())
-        .subcommand(print_rule_subcommand())
-        .subcommand(print_buildfile_subcommand())
+        .about("Print one or more values to the console (stdout)")
+        .arg_required_else_help(true)
+        .subcommand(print_imports())
+        .subcommand(print_rule())
+        .subcommand(print_buildfile())
 }
 
-fn print_imports_subcommand() -> Command {
+fn print_imports() -> Command {
     Command::new("imports")
-        .about("View imports for a target module")
-        .arg(new_targets_arg())
-        .arg(Arg::from(Argument::Flag(
-            "relative",
-            None,
-            "View imports as relative paths",
-        )))
-        .arg(Arg::from(Argument::Flag(
-            "absolute",
-            None,
-            "View imports as absolute paths",
-        )))
-        .arg(Arg::from(Argument::Flag(
-            "unique",
-            None,
-            "View imports for multiple targets as a unique list",
-        )))
+        .about("View imports for one or more target modules")
+        .arg_required_else_help(true)
+        .arg(unary!("target", 't', "Path to target module"))
+        .arg(unbounded!("targets", "Path to one or more target modules"))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
+        .arg(flag!("relative", "View imports as relative paths"))
+        .arg(flag!("absolute", "View imports as absolute paths"))
         .group(
             ArgGroup::new("path-format")
                 .args(["relative", "absolute"])
                 .required(true),
         )
+        .arg(
+            flag!(
+                "unique",
+                "View imports for multiple targets as a unique list"
+            )
+            .requires("targets"),
+        )
 }
 
-fn print_rule_subcommand() -> Command {
+fn print_rule() -> Command {
     Command::new("rule")
-        .about("View the build rule for a target module")
-        .arg(new_target_arg())
-        .arg(Arg::from(Argument::Flag(
+        .about("View the build rule for one or more target modules")
+        .arg_required_else_help(true)
+        .arg(unary!("target", 't', "Path to target module"))
+        .arg(unbounded!("targets", "Path to one or more target modules"))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
+        .arg(flag!(
             "name-only",
-            None,
-            "Only print the `name` value present in the rule",
-        )))
+            "Only print the `name` value present in the rule"
+        ))
 }
 
-fn print_buildfile_subcommand() -> Command {
+fn print_buildfile() -> Command {
     Command::new("buildfile")
-        .about("Find nearest build file to the target module")
-        .arg(new_target_arg())
-        .arg(Arg::from(Argument::Flag(
+        .about("Find nearest build file(s) to one or more target modules")
+        .arg_required_else_help(true)
+        .arg(unary!("target", 't', "Path to target module"))
+        .arg(unbounded!("targets", "Path to one or more target modules"))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
+        .arg(flag!(
             "names-only",
-            None,
-            "Only print the `name` value(s) present in the build file",
-        )))
+            "Only print the `name` value(s) present in the build file"
+        ))
 }

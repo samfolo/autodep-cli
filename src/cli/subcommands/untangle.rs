@@ -1,25 +1,19 @@
 use clap::{Arg, ArgGroup, Command};
 
-use crate::cli::args::Argument;
+use crate::{unary, unbounded};
 
-pub fn untangle_subcommand() -> Command {
+pub fn untangle() -> Command {
     Command::new("untangle")
         .about("Rebuild dependency graph for one or more target directories")
-        .arg(Arg::from(Argument::Unbounded(
-            "dirs",
-            None,
-            "Path to one or more target directories",
-            true,
-        )))
-        .arg(Arg::from(Argument::Unary(
-            "dir",
-            Some('d'),
-            "Path to a target directory",
-            true,
-        )))
+        .arg_required_else_help(true)
+        .arg(unary!("target", 't', "Path to target directory"))
+        .arg(unbounded!(
+            "targets",
+            "Path to one or more target directories"
+        ))
         .group(
-            ArgGroup::new("target-type")
-                .args(["dirs", "dir"])
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
                 .required(true),
         )
 }

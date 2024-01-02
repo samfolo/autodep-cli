@@ -1,7 +1,6 @@
-mod args;
 mod cli;
 
-pub(super) mod common;
+pub(super) mod args;
 pub(super) mod subcommands;
 
 pub use cli::*;

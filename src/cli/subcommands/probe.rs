@@ -1,36 +1,45 @@
-use clap::{Arg, Command};
+use clap::{Arg, ArgGroup, Command};
 
-use crate::cli::args::Argument;
+use crate::{flag, unary, unbounded};
 
-pub fn probe_subcommand() -> Command {
+pub fn probe() -> Command {
     Command::new("probe")
         .about("View insights for one or more target build files or directories")
-        .subcommand(buildfile_subcommand())
-        .subcommand(rule_subcommand())
+        .arg_required_else_help(true)
+        .subcommand(buildfile())
+        .subcommand(rule())
 }
 
-fn buildfile_subcommand() -> Command {
+fn buildfile() -> Command {
     Command::new("buildfile")
-        .about("View insights for a build file")
+        .about("View insights for one or more build files")
         .arg_required_else_help(true)
-        .arg(Arg::from(Argument::Unary(
-            "target",
-            Some('t'),
-            "Path to target build file",
-            true,
-        )))
-        .arg(Arg::from(Argument::Flag("json", None, "Print as JSON")))
+        .arg(unary!("target", 't', "Path to target build file"))
+        .arg(unbounded!(
+            "targets",
+            "Path to one or more target build files"
+        ))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
+        .arg(flag!("json", "Print as JSON"))
 }
 
-fn rule_subcommand() -> Command {
+fn rule() -> Command {
     Command::new("rule")
-        .about("View insights for a build rule")
+        .about("View insights for one or more build rules")
         .arg_required_else_help(true)
-        .arg(Arg::from(Argument::Unary(
-            "target",
-            Some('t'),
-            "Path to target build rule",
-            true,
-        )))
-        .arg(Arg::from(Argument::Flag("json", None, "Print as JSON")))
+        .arg(unary!("target", 't', "Path to target build rule"))
+        .arg(unbounded!(
+            "targets",
+            "Path to one or more target build rules"
+        ))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
+        .arg(flag!("json", "Print as JSON"))
 }

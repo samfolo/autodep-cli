@@ -1,14 +1,23 @@
-use clap::{Arg, Command};
+use clap::{Arg, ArgGroup, Command};
 
-use crate::cli::args::Argument;
+use crate::{unary, unbounded};
 
-pub fn prune_subcommand() -> Command {
+pub fn prune() -> Command {
     Command::new("prune")
-        .about("Prune unused build rules in one or more target build files or directories")
-        .arg(Arg::from(Argument::Unbounded(
+        .about("Prune unused build rules from one or more target build files or directories")
+        .arg_required_else_help(true)
+        .arg(unary!(
+            "target",
+            't',
+            "Path to target build file or directory"
+        ))
+        .arg(unbounded!(
             "targets",
-            Some('t'),
-            "Path to one or more target build files or directories",
-            true,
-        )))
+            "Path to one or more target build file or directories"
+        ))
+        .group(
+            ArgGroup::new("target-plurality")
+                .args(["target", "targets"])
+                .required(true),
+        )
 }
