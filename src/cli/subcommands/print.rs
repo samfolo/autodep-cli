@@ -20,14 +20,14 @@ fn print_imports() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(true),
+                .required(false),
         )
         .arg(flag!("relative", "View imports as relative paths"))
         .arg(flag!("absolute", "View imports as absolute paths"))
         .group(
             ArgGroup::new("path-format")
                 .args(["relative", "absolute"])
-                .required(true),
+                .required(false),
         )
         .arg(
             flag!(
@@ -47,7 +47,7 @@ fn print_rule() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(true),
+                .required(false),
         )
         .arg(flag!(
             "name-only",
@@ -64,7 +64,7 @@ fn print_buildfile() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(true),
+                .required(false),
         )
         .arg(flag!(
             "names-only",

@@ -14,7 +14,7 @@ pub fn run() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(true),
+                .required(false),
         )
         .arg(flag!("create", "Create a build file if it does not exist"))
         .arg(flag!(

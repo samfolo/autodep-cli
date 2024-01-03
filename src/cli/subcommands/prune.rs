@@ -18,6 +18,6 @@ pub fn prune() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(true),
+                .required(false),
         )
 }

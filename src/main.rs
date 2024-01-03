@@ -5,6 +5,6 @@ pub mod parsers;
 use cli::AutodepCli;
 
 fn main() {
-    let cli = AutodepCli::new();
-    cli.launch();
+    let cli = AutodepCli::new().launch();
+    cli.get_matches();
 }

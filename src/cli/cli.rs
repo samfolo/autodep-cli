@@ -9,7 +9,7 @@ impl AutodepCli {
         AutodepCli
     }
 
-    pub fn launch(&self) -> clap::ArgMatches {
+    pub fn launch(&self) -> clap::Command {
         Command::new("autodep")
             .bin_name("autodep")
             .version(crate_version!())
@@ -23,6 +23,5 @@ impl AutodepCli {
             .arg(flag!("verbose", 'v', "Enables verbose output").conflicts_with("silent"))
             .arg(flag!("silent", 's', "Disables all output").conflicts_with("verbose"))
             .arg(flag!("config", 'c', "The config to use with autodep"))
-            .get_matches()
     }
 }
