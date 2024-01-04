@@ -1,7 +1,7 @@
 use rustpython_parser::{ast, Mode};
 use std::fs;
 
-use crate::parsers::{common, errors};
+use crate::{common::parser::Parser, errors};
 
 pub struct PythonParser;
 
@@ -11,7 +11,7 @@ impl PythonParser {
     }
 }
 
-impl common::Parser<ast::Mod> for PythonParser {
+impl Parser<ast::Mod> for PythonParser {
     fn parse(&self, file_path: &str) -> Result<ast::Mod, errors::ParseError> {
         let source = fs::read_to_string(file_path).map_err(|e| errors::ParseError::Io(e))?;
 

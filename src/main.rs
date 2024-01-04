@@ -1,8 +1,9 @@
 pub mod cli;
+pub mod common;
 pub mod config;
+pub mod errors;
 pub mod node;
-pub mod parsers;
-pub mod visitors;
+pub mod python;
 
 use cli::AutodepCli;
 

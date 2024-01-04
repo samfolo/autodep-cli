@@ -3,7 +3,10 @@ extern crate tempfile;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
-use crate::parsers::node::parser::{NodeParser, ParseMode};
+use crate::{
+    common::parser::Parser,
+    node::parser::{ParseMode, TypeScriptParser},
+};
 
 // Helper function to create a temporary file with given content
 fn create_temp_file(content: &str) -> NamedTempFile {
@@ -14,7 +17,7 @@ fn create_temp_file(content: &str) -> NamedTempFile {
 
 #[test]
 fn test_parse_typescript_file() {
-    let parser = NodeParser::new();
+    let parser = TypeScriptParser::new();
     let ts_content = r#"let x: number = 10;"#; // Sample TypeScript content
     let temp_file = create_temp_file(ts_content);
     let file_path = temp_file
@@ -22,9 +25,9 @@ fn test_parse_typescript_file() {
         .to_str()
         .expect("Failed to convert temp file path to string");
 
-    match parser.parse(file_path, ParseMode::TypeScript) {
+    match parser.parse(file_path) {
         Ok(module) => {
-            println!("{:#?}", module)
+            println!("{:#?}", module) // works! finish test later..
         }
         Err(e) => panic!("Failed to parse TypeScript content: {:?}", e),
     }

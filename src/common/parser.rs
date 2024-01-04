@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use crate::parsers::errors;
+use crate::errors;
 
 pub trait Parser<T>
 where

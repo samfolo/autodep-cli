@@ -11,7 +11,7 @@ use swc_ecma_transforms::modules::path::{
 
 use tsconfig::TsConfig;
 
-use super::errors::ResolverError;
+use crate::errors::ResolverError;
 
 pub struct ModuleResolutionClient {
     pub import_resolver: NodeImportResolver<TsConfigResolver<NodeModulesResolver>>,
