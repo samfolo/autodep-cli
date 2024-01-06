@@ -6,7 +6,7 @@ use tempfile::NamedTempFile;
 use crate::{common::parser::Parser, node::parser::TypeScriptParser};
 
 // Helper function to create a temporary file with given content
-fn create_temp_file(content: &str) -> NamedTempFile {
+fn create_file(content: &str) -> NamedTempFile {
     let mut file = NamedTempFile::new().expect("Failed to create temporary file");
     writeln!(file, "{}", content).expect("Failed to write to temporary file");
     file
@@ -16,7 +16,7 @@ fn create_temp_file(content: &str) -> NamedTempFile {
 fn test_parse_typescript_file() {
     let parser = TypeScriptParser::new();
     let ts_content = r#"let x: number = 10;"#; // Sample TypeScript content
-    let temp_file = create_temp_file(ts_content);
+    let temp_file = create_file(ts_content);
     let file_path = temp_file
         .path()
         .to_str()

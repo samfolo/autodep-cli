@@ -1,5 +1,7 @@
-pub mod models;
-pub mod module_resolution;
-pub mod parser;
-pub mod probe;
-pub mod visitor;
+pub(crate) mod models;
+pub(crate) mod module_resolution;
+pub(crate) mod parser;
+pub(crate) mod probe;
+pub(crate) mod visitor;
+
+pub use probe::*;

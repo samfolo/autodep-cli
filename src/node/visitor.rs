@@ -12,8 +12,9 @@ impl ModuleSpecifierVisitor {
         }
     }
 
-    fn add_import(&mut self, src: &str) {
+    fn add_import(&mut self, src: &str) -> &Self {
         self.imports.push(src.to_string());
+        self
     }
 
     pub fn collect_from(&mut self, module: &Module) -> &Self {
