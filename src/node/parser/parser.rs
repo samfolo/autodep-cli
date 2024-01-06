@@ -22,7 +22,7 @@ impl TypeScriptParser {
 }
 
 impl Parser<Module> for TypeScriptParser {
-    fn parse(&self, raw_filepath: &str) -> Result<Module, ParseError> {
+    fn load_and_parse(&self, raw_filepath: &str) -> Result<Module, ParseError> {
         let file_path = std::path::Path::new(raw_filepath);
         let file_map = self.source_map.load_file(&file_path)?;
 
@@ -57,7 +57,7 @@ impl ESParser {
 }
 
 impl Parser<Module> for ESParser {
-    fn parse(&self, raw_filepath: &str) -> Result<Module, ParseError> {
+    fn load_and_parse(&self, raw_filepath: &str) -> Result<Module, ParseError> {
         let file_path = std::path::Path::new(raw_filepath);
         let file_map = self.source_map.load_file(&file_path)?;
 

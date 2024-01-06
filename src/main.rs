@@ -5,6 +5,8 @@ pub mod errors;
 pub mod node;
 pub mod python;
 
+pub(crate) mod test_utils;
+
 use cli::AutodepCli;
 
 fn main() {

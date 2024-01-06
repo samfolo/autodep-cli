@@ -1,11 +1,11 @@
 use swc_ecma_ast::*;
 use swc_ecma_visit::Visit;
 
-pub struct NodeImportsVisitor {
+pub struct ModuleSpecifierVisitor {
     imports: Vec<String>,
 }
 
-impl NodeImportsVisitor {
+impl ModuleSpecifierVisitor {
     pub fn new() -> Self {
         Self {
             imports: Vec::new(),
@@ -16,16 +16,17 @@ impl NodeImportsVisitor {
         self.imports.push(src.to_string());
     }
 
-    pub fn collect_from(&mut self, module: &Module) {
+    pub fn collect_from(&mut self, module: &Module) -> &Self {
         self.visit_module(&module);
+        self
     }
 
-    pub fn imports(&self) -> Vec<String> {
-        self.imports
+    pub fn imports(&self) -> &Vec<String> {
+        &self.imports
     }
 }
 
-impl Visit for NodeImportsVisitor {
+impl Visit for ModuleSpecifierVisitor {
     fn visit_import_decl(&mut self, import: &ImportDecl) {
         self.add_import(&import.src.value);
     }

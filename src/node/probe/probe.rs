@@ -1,71 +1,78 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, rc::Rc};
 
 use tsconfig::{ConfigError, TsConfig};
 
 use crate::{
     common::parser::Parser,
     node::{
-        models::imports::NodeImport,
+        models::module_specifier::ModuleSpecifier,
         module_resolution::ModuleResolutionClient,
-        parser::{self, ParseMode, TypeScriptParser},
-        visitor::NodeImportsVisitor,
+        parser::{ParseMode, TypeScriptParser},
+        visitor::ModuleSpecifierVisitor,
     },
 };
 
-struct UninitialisedNodeImportsProbe;
+pub struct UninitialisedModuleSpecifierProbe;
 
-impl UninitialisedNodeImportsProbe {
+impl UninitialisedModuleSpecifierProbe {
     pub fn configure_from_path(
+        &self,
         tsconfig_filepath: &PathBuf,
-    ) -> Result<NodeImportsProbe, ConfigError> {
+    ) -> Result<ModuleSpecifierProbe, ConfigError> {
         let config = TsConfig::parse_file(tsconfig_filepath)?;
-        Ok(NodeImportsProbe {
-            config,
+        let config = Rc::new(config);
+
+        Ok(ModuleSpecifierProbe {
+            config: Rc::clone(&config),
             client: ModuleResolutionClient::new(&config),
         })
     }
 
-    pub fn configure_from_str(tsconfig: &str) -> Result<NodeImportsProbe, ConfigError> {
+    pub fn configure_from_str(&self, tsconfig: &str) -> Result<ModuleSpecifierProbe, ConfigError> {
         let config = TsConfig::parse_str(tsconfig)?;
-        Ok(NodeImportsProbe {
-            config,
+        let config = Rc::new(config);
+
+        Ok(ModuleSpecifierProbe {
+            config: Rc::clone(&config),
             client: ModuleResolutionClient::new(&config),
         })
     }
 }
 
-pub struct NodeImportsProbe {
-    config: TsConfig,
+#[derive(Debug)]
+pub struct ModuleSpecifierProbe {
+    config: Rc<TsConfig>,
     client: ModuleResolutionClient,
 }
 
-impl NodeImportsProbe {
-    pub fn new() -> UninitialisedNodeImportsProbe {
-        UninitialisedNodeImportsProbe
+impl ModuleSpecifierProbe {
+    pub fn new() -> UninitialisedModuleSpecifierProbe {
+        UninitialisedModuleSpecifierProbe
     }
 
     pub fn probe(
         &self,
         raw_filepath: &str,
         mode: ParseMode,
-    ) -> Result<Vec<NodeImport>, Box<dyn std::error::Error>> {
+    ) -> Result<Vec<ModuleSpecifier>, Box<dyn std::error::Error>> {
         match mode {
             ParseMode::ECMAScript => Ok(vec![]),
             ParseMode::TypeScript => {
                 let parser = TypeScriptParser::new();
-                let module = parser.parse(raw_filepath)?;
-
-                let visitor = NodeImportsVisitor::new();
-                visitor.collect_from(&module);
+                let module = parser.load_and_parse(raw_filepath)?;
 
                 let filepath = PathBuf::from(raw_filepath);
 
-                let imports: Vec<_> = visitor
+                let module_specifiers = ModuleSpecifierVisitor::new()
+                    .collect_from(&module)
                     .imports()
-                    .iter()
-                    .map::<String>(|i| self.client.resolve_import(&filepath, i).into())
-                    .collect();
-                self.client.resolve_import(&filepath, module_specifier)
+                    .into_iter()
+                    .map(|module_specifier| {
+                        ModuleSpecifier::from(&filepath, module_specifier.to_string(), &self.client)
+                    })
+                    .collect::<Vec<ModuleSpecifier>>();
+
+                Ok(module_specifiers)
             }
         }
     }

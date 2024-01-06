@@ -12,7 +12,7 @@ impl PythonParser {
 }
 
 impl Parser<ast::Mod> for PythonParser {
-    fn parse(&self, file_path: &str) -> Result<ast::Mod, errors::ParseError> {
+    fn load_and_parse(&self, file_path: &str) -> Result<ast::Mod, errors::ParseError> {
         let source = fs::read_to_string(file_path).map_err(|e| errors::ParseError::Io(e))?;
 
         rustpython_parser::parse(&source, Mode::Module, "<embedded>")

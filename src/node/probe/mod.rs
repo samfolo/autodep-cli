@@ -1,1 +1,2 @@
 mod probe;
+mod tests;

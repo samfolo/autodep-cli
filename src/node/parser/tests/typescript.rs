@@ -3,10 +3,7 @@ extern crate tempfile;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
-use crate::{
-    common::parser::Parser,
-    node::parser::{ParseMode, TypeScriptParser},
-};
+use crate::{common::parser::Parser, node::parser::TypeScriptParser};
 
 // Helper function to create a temporary file with given content
 fn create_temp_file(content: &str) -> NamedTempFile {
@@ -25,7 +22,7 @@ fn test_parse_typescript_file() {
         .to_str()
         .expect("Failed to convert temp file path to string");
 
-    match parser.parse(file_path) {
+    match parser.load_and_parse(file_path) {
         Ok(module) => {
             println!("{:#?}", module) // works! finish test later..
         }

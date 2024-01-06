@@ -1,1 +1,1 @@
-pub mod imports;
+pub mod module_specifier;

@@ -13,6 +13,7 @@ use tsconfig::TsConfig;
 
 use crate::errors::ResolverError;
 
+#[derive(Debug)]
 pub struct ModuleResolutionClient {
     pub import_resolver: NodeImportResolver<TsConfigResolver<NodeModulesResolver>>,
 }
