@@ -1,13 +1,4 @@
-pub mod cli;
-pub mod common;
-pub mod config;
-pub mod errors;
-pub mod node;
-pub mod python;
-
-pub(crate) mod test_utils;
-
-use cli::{handlers::print::imports::handle_print_imports, AutodepCli};
+use autodep_cli::cli::{handlers::print::imports::handle_print_imports, AutodepCli};
 
 fn main() {
     let cli = AutodepCli::new().launch();

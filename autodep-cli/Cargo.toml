@@ -1,0 +1,32 @@
+[package]
+name = "autodep-cli"
+description = "A command-line utility to manage build files in monorepo setups"
+authors = ["Sam Folorunsho"]
+rust-version = "1.74"
+version = "0.1.0"
+edition = "2021"
+license-file = "LICENSE"
+readme = "README.md"
+
+[dependencies]
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+config.workspace = true
+swc_common.workspace = true
+swc_ecma_ast.workspace = true
+swc_atoms.workspace = true
+swc_ecma_parser.workspace = true
+swc_ecma_loader.workspace = true
+swc_ecma_transforms.workspace = true
+swc_ecma_visit.workspace = true
+log.workspace = true
+env_logger.workspace = true
+rustpython-parser.workspace = true
+thiserror.workspace = true
+tsconfig.workspace = true
+tempfile.workspace = true
+
+
+

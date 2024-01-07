@@ -1,6 +1,6 @@
 #[test]
 fn test_help() {
-    let mut autodep = crate::AutodepCli::new().launch();
+    let mut autodep = crate::cli::AutodepCli::new().launch();
     let help_str = autodep.render_help().to_string();
 
     assert!(help_str.contains("autodep"));

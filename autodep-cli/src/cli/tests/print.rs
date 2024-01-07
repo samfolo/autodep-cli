@@ -1,6 +1,6 @@
 #[test]
 fn test_no_args() {
-    let app = crate::AutodepCli::new().launch();
+    let app = crate::cli::AutodepCli::new().launch();
     let result = app.try_get_matches_from(vec!["autodep", "print"]);
 
     assert!(
@@ -12,7 +12,7 @@ fn test_no_args() {
 mod imports {
     #[test]
     fn test_no_args() {
-        let app = crate::AutodepCli::new().launch();
+        let app = crate::cli::AutodepCli::new().launch();
         let result = app.try_get_matches_from(vec!["autodep", "print", "imports"]);
 
         assert!(
@@ -24,7 +24,7 @@ mod imports {
     mod target {
         #[test]
         fn test_no_args() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec!["autodep", "print", "imports", "--target"]);
 
             assert!(
@@ -35,7 +35,7 @@ mod imports {
 
         #[test]
         fn test_single() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -62,7 +62,7 @@ mod imports {
 
         #[test]
         fn test_multiple() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -91,7 +91,7 @@ mod imports {
 
         #[test]
         fn test_relative_flag() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -115,7 +115,7 @@ mod imports {
 
         #[test]
         fn test_absolute_flag() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -142,7 +142,7 @@ mod imports {
 mod rule {
     #[test]
     fn test_no_args() {
-        let app = crate::AutodepCli::new().launch();
+        let app = crate::cli::AutodepCli::new().launch();
         let result = app.try_get_matches_from(vec!["autodep", "print", "rule"]);
 
         assert!(
@@ -153,7 +153,7 @@ mod rule {
     mod target {
         #[test]
         fn test_no_args() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec!["autodep", "print", "rule", "--target"]);
 
             assert!(
@@ -164,7 +164,7 @@ mod rule {
 
         #[test]
         fn test_single() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -191,7 +191,7 @@ mod rule {
 
         #[test]
         fn test_name_only_flag() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -215,7 +215,7 @@ mod rule {
 
         #[test]
         fn test_multiple() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -247,7 +247,7 @@ mod rule {
 mod buildfile {
     #[test]
     fn test_no_args() {
-        let app = crate::AutodepCli::new().launch();
+        let app = crate::cli::AutodepCli::new().launch();
         let result = app.try_get_matches_from(vec!["autodep", "print", "buildfile"]);
 
         assert!(
@@ -259,7 +259,7 @@ mod buildfile {
     mod target {
         #[test]
         fn test_no_args() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result =
                 app.try_get_matches_from(vec!["autodep", "print", "buildfile", "--target"]);
 
@@ -271,7 +271,7 @@ mod buildfile {
 
         #[test]
         fn test_buildfile_target() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -298,7 +298,7 @@ mod buildfile {
 
         #[test]
         fn test_buildfile_multiple_targets() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
@@ -327,7 +327,7 @@ mod buildfile {
 
         #[test]
         fn test_names_only_flag() {
-            let app = crate::AutodepCli::new().launch();
+            let app = crate::cli::AutodepCli::new().launch();
             let result = app.try_get_matches_from(vec![
                 "autodep",
                 "print",
