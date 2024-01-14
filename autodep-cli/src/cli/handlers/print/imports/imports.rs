@@ -22,18 +22,14 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
                 Err(e) => return Err(e.to_string().into()),
             };
 
-            let imports = probe.probe(target_path, ParseMode::TypeScript);
-            let imports = match imports {
-                Ok(imports) => imports,
-                Err(e) => return Err(e.to_string().into()),
-            };
+            let imports = probe.probe(target_path, ParseMode::TypeScript)?;
 
             let mut result: Vec<String> = vec![];
-
             for import in &imports {
                 if is_relative {
                     result.push(import.raw().to_owned());
                 } else {
+                    // HEREEEEEEE
                     if let Some(resolved) = import.resolved() {
                         result.push(resolved.to_owned());
                     } else {
@@ -53,10 +49,12 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
                 println!("{}", import);
             }
         }
-        (None, Some(target_paths)) => {
-            for path in target_paths {
-                println!("Processing target: {}", path);
-            }
+        (None, Some(_target_paths)) => {
+            unimplemented!();
+
+            // for path in target_paths {
+            //     println!("Processing target: {}", path);
+            // }
         }
         (None, None) => {
             return Err(

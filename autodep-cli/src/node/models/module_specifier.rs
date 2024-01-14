@@ -8,7 +8,7 @@ use crate::{
 #[derive(Debug)]
 pub struct ModuleSpecifier {
     pub(crate) raw: String,
-    resolved: Option<String>,
+    resolved: Option<ModuleType>,
 }
 
 impl ModuleSpecifier {
@@ -17,11 +17,7 @@ impl ModuleSpecifier {
         raw: String,
         client: &ModuleResolutionClient,
     ) -> Result<Self, ResolverError> {
-        let resolved = client
-            .resolve_import(filepath, &raw)
-            .map(|path| match path {
-                ModuleType::Local(path) | ModuleType::ThirdParty(path) => path,
-            })?;
+        let resolved = client.resolve_import(filepath, &raw)?;
 
         Ok(Self {
             raw,
@@ -33,7 +29,7 @@ impl ModuleSpecifier {
         &self.raw
     }
 
-    pub fn resolved(&self) -> &Option<String> {
+    pub fn resolved(&self) -> &Option<ModuleType> {
         &self.resolved
     }
 }

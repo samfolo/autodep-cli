@@ -25,6 +25,7 @@ pub struct ModuleResolutionClient {
 pub enum ModuleType {
     Local(String),
     ThirdParty(String),
+    Internal(String),
 }
 
 impl ModuleResolutionClient {
@@ -101,7 +102,15 @@ impl ModuleResolutionClient {
             NodeModulesResolver::new(TargetEnv::Node, Default::default(), true)
                 .resolve(&FileName::Real(self.base_url.clone()), &resolved_import_str)
                 .map_err(|e| ResolverError::ImportResolution(e.to_string()))
-                .map(|p| ModuleType::ThirdParty(p.to_string()))
+                .and_then(|p| match p {
+                    FileName::Real(p) => Ok(ModuleType::ThirdParty(
+                        p.to_str()
+                            .ok_or_else(|| ResolverError::NonUtf8Path)?
+                            .to_string(),
+                    )),
+                    FileName::Internal(i) => Ok(ModuleType::Internal(i)),
+                    t => Err(ResolverError::UnexpectedModuleType(t.to_string())),
+                })
         }
     }
 }

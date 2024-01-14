@@ -4,6 +4,8 @@ use thiserror::Error;
 pub enum ResolverError {
     #[error("Import resolution error: {0}")]
     ImportResolution(String),
+    #[error("Unexpected module type: {0}")]
+    UnexpectedModuleType(String),
     #[error("Canonicalisation error: {0}")]
     Canonicalisation(String),
     #[error("Path conversion error: {0}")]
