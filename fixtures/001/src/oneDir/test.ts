@@ -3,7 +3,7 @@ import nodeModuleImport from 'some-node-module';
 
 import aliasedImport from '@alias/aliasedModule';
 
-import localFileImport from '../localFile';
+import localFileImport from '../anotherDir/localFile';
 
 import relativeImport from './relativeModule';
 

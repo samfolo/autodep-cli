@@ -1,6 +1,6 @@
 use clap::{crate_version, Arg, Command};
 
-use crate::{cli::subcommands, flag};
+use crate::{cli::subcommands, flag, unary};
 
 pub struct AutodepCli;
 
@@ -20,8 +20,24 @@ impl AutodepCli {
             .subcommand(subcommands::probe())
             .subcommand(subcommands::untangle())
             .subcommand(subcommands::prune())
-            .arg(flag!("verbose", 'v', "Enables verbose output").conflicts_with("silent"))
-            .arg(flag!("silent", 's', "Disables all output").conflicts_with("verbose"))
-            .arg(flag!("config", 'c', "The config to use with autodep"))
+            .arg(
+                flag!("verbose", 'v', "Enables verbose output")
+                    .conflicts_with("silent")
+                    .global(true),
+            )
+            .arg(
+                flag!("silent", 's', "Disables all output")
+                    .conflicts_with("verbose")
+                    .global(true),
+            )
+            .arg(
+                unary!(
+                    "project",
+                    'p',
+                    "The tsconfig to use when resolving absolute paths. Can be a path to a tsconfig.json file or a directory containing a tsconfig.json file."
+                )
+                .global(true),
+            )
+            .arg(unary!("config", 'c', "The config to use with autodep").global(true))
     }
 }

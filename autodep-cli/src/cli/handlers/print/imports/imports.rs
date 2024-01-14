@@ -1,7 +1,11 @@
 use clap::{builder::Str, ArgMatches};
 use std::{env, path::PathBuf};
 
-use crate::node::{parser::ParseMode, probe::probe::ModuleSpecifierProbe};
+use crate::{
+    cli::handlers::common::tsconfig::resolve_tsconfig_path,
+    errors::ResolverError,
+    node::{parser::ParseMode, probe::probe::ModuleSpecifierProbe},
+};
 
 pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     let target: Option<&String> = args.get_one("target");
@@ -11,13 +15,18 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
 
     match (target, targets) {
         (Some(target_path), None) => {
-            // Should this have a default, or should this fail gracefully?
-            let default_tsconfig_path = env::current_dir().unwrap().join("tsconfig.json");
+            let tsconfig_path = resolve_tsconfig_path(args.get_one("project"), target_path)?;
 
-            let probe = ModuleSpecifierProbe::new().configure_from_path(&default_tsconfig_path);
-            let probe = probe.unwrap();
+            let probe = match ModuleSpecifierProbe::new().configure_from_path(&tsconfig_path) {
+                Ok(p) => p,
+                Err(e) => return Err(e.to_string().into()),
+            };
+
             let imports = probe.probe(target_path, ParseMode::TypeScript);
-            let imports = imports.unwrap();
+            let imports = match imports {
+                Ok(imports) => imports,
+                Err(e) => return Err(e.to_string().into()),
+            };
 
             let mut result: Vec<String> = vec![];
 

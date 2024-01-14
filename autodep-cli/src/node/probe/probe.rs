@@ -1,12 +1,6 @@
-use std::{
-    env,
-    f64::consts::E,
-    path::{Path, PathBuf},
-    rc::Rc,
-};
+use std::{env, path::PathBuf, rc::Rc};
 
-use clap::builder::Str;
-use tsconfig::{CompilerOptions, ConfigError, TsConfig};
+use tsconfig::{ConfigError, TsConfig};
 
 use crate::{
     common::parser::Parser,
@@ -47,12 +41,22 @@ impl UninitialisedModuleSpecifierProbe {
     }
 
     pub fn configure_from_str(&self, tsconfig: &str) -> Result<ModuleSpecifierProbe, ConfigError> {
-        let config = TsConfig::parse_str(tsconfig)?;
-        let config = Rc::new(config);
+        let mut config = TsConfig::parse_str(tsconfig)?;
+        let current_dir = env::current_dir()?;
+
+        if let Some(compiler_options) = &mut config.compiler_options {
+            let base_url = compiler_options.base_url.clone().unwrap();
+            let absolute_base_url = current_dir.join(base_url).canonicalize()?;
+
+            compiler_options.base_url = Some(absolute_base_url.to_str().unwrap().to_string());
+        }
+
+        let config_rc = Rc::new(config);
+        let client = ModuleResolutionClient::new(&config_rc);
 
         Ok(ModuleSpecifierProbe {
-            config: Rc::clone(&config),
-            client: ModuleResolutionClient::new(&config),
+            config: config_rc,
+            client,
         })
     }
 }
@@ -88,7 +92,7 @@ impl ModuleSpecifierProbe {
                     .map(|module_specifier| {
                         ModuleSpecifier::from(&filepath, module_specifier.to_string(), &self.client)
                     })
-                    .collect::<Vec<ModuleSpecifier>>();
+                    .collect::<Result<Vec<_>, _>>()?;
 
                 Ok(module_specifiers)
             }

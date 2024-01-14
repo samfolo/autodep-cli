@@ -1,6 +1,9 @@
-use std::path::PathBuf;
+use std::path::Path;
 
-use crate::node::module_resolution::ModuleResolutionClient;
+use crate::{
+    errors::ResolverError,
+    node::module_resolution::{ModuleResolutionClient, ModuleType},
+};
 
 #[derive(Debug)]
 pub struct ModuleSpecifier {
@@ -9,16 +12,21 @@ pub struct ModuleSpecifier {
 }
 
 impl ModuleSpecifier {
-    pub fn from(filepath: &PathBuf, raw: String, client: &ModuleResolutionClient) -> Self {
+    pub fn from(
+        filepath: &Path,
+        raw: String,
+        client: &ModuleResolutionClient,
+    ) -> Result<Self, ResolverError> {
         let resolved = client
             .resolve_import(filepath, &raw)
-            .map(|path| path.to_string())
-            .unwrap();
+            .map(|path| match path {
+                ModuleType::Local(path) | ModuleType::ThirdParty(path) => path,
+            })?;
 
-        Self {
+        Ok(Self {
             raw,
             resolved: Some(resolved),
-        }
+        })
     }
 
     pub fn raw(&self) -> &str {
