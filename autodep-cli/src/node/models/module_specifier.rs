@@ -13,9 +13,12 @@ impl ModuleSpecifier {
         let resolved = client
             .resolve_import(filepath, &raw)
             .map(|path| path.to_string())
-            .ok();
+            .unwrap();
 
-        Self { raw, resolved }
+        Self {
+            raw,
+            resolved: Some(resolved),
+        }
     }
 
     pub fn raw(&self) -> &str {

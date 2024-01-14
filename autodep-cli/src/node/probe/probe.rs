@@ -37,8 +37,6 @@ impl UninitialisedModuleSpecifierProbe {
             compiler_options.base_url = Some(absolute_base_url.to_str().unwrap().to_string());
         }
 
-        println!("{:#?}", config.compiler_options);
-
         let config_rc = Rc::new(config);
         let client = ModuleResolutionClient::new(&config_rc);
 

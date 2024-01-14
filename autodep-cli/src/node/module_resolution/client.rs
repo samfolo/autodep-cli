@@ -1,4 +1,7 @@
-use std::path::PathBuf;
+use std::{
+    path::{Path, PathBuf},
+    rc::Rc,
+};
 use swc_atoms::Atom;
 use swc_common::FileName;
 use swc_ecma_loader::{
@@ -15,6 +18,7 @@ use crate::errors::ResolverError;
 
 #[derive(Debug)]
 pub struct ModuleResolutionClient {
+    base_url: String,
     pub import_resolver: NodeImportResolver<TsConfigResolver<NodeModulesResolver>>,
 }
 
@@ -45,7 +49,10 @@ impl ModuleResolutionClient {
             },
         );
 
-        Self { import_resolver }
+        Self {
+            base_url,
+            import_resolver,
+        }
     }
 
     pub fn resolve_import(
@@ -53,8 +60,40 @@ impl ModuleResolutionClient {
         filepath: &PathBuf,
         module_specifier: &str,
     ) -> Result<Atom, ResolverError> {
-        self.import_resolver
+        let resolved_relative_import = self
+            .import_resolver
             .resolve_import(&FileName::Real(filepath.to_path_buf()), module_specifier)
-            .map_err(|e| ResolverError::ImportResolution(e.to_string()))
+            .map_err(|e| ResolverError::ImportResolution(e.to_string()));
+
+        match resolved_relative_import {
+            Ok(resolved_relative_import) => {
+                let resolved_import = self.normalize_path(
+                    &PathBuf::from(&self.base_url).join(resolved_relative_import.to_string()),
+                );
+                Ok(resolved_import.to_str().unwrap().to_string().into())
+            }
+            Err(e) => Err(e),
+        }
+    }
+
+    pub fn normalize_path(&self, path: &Path) -> PathBuf {
+        let mut components = path.components().peekable();
+        let mut result = PathBuf::new();
+
+        while let Some(component) = components.next() {
+            match component {
+                std::path::Component::ParentDir => {
+                    if !result.as_os_str().is_empty() && result.as_os_str() != ".." {
+                        result.pop();
+                    } else {
+                        result.push("..");
+                    }
+                }
+                std::path::Component::CurDir => (),
+                _ => result.push(component.as_os_str()),
+            }
+        }
+
+        result
     }
 }

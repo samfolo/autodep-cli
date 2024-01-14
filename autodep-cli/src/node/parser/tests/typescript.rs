@@ -3,8 +3,6 @@ extern crate tempfile;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
-
-
 // Helper function to create a temporary file with given content
 fn create_file(content: &str) -> NamedTempFile {
     let mut file = NamedTempFile::new().expect("Failed to create temporary file");
@@ -24,7 +22,7 @@ fn test_parse_typescript_file() {
 
     match parser.load_and_parse(file_path) {
         Ok(module) => {
-            println!("{:#?}", module) // works! finish test later..
+            // println!("{:#?}", module) // works! finish test later..
         }
         Err(e) => panic!("Failed to parse TypeScript content: {:?}", e),
     }
