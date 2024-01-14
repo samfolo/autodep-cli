@@ -60,6 +60,4 @@ fn test_probe_imports_from_file() {
 
     let imports = imports.unwrap();
     assert_eq!(imports.len(), 5);
-
-    println!("{:#?}", imports);
 }
