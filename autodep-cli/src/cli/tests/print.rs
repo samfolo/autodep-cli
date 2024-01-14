@@ -112,30 +112,6 @@ mod imports {
                 .expect("Expected 'imports' subcommand");
             assert!(imports_matches.get_flag("relative"));
         }
-
-        #[test]
-        fn test_absolute_flag() {
-            let app = crate::cli::AutodepCli::new().launch();
-            let result = app.try_get_matches_from(vec![
-                "autodep",
-                "print",
-                "imports",
-                "--target",
-                "path/to/file.tsx",
-                "--absolute",
-            ]);
-
-            assert!(result.is_ok(), "Failed to parse command line arguments");
-
-            let matches = result.expect("Expected valid matches");
-            let print_matches = matches
-                .subcommand_matches("print")
-                .expect("Expected 'print' subcommand");
-            let imports_matches = print_matches
-                .subcommand_matches("imports")
-                .expect("Expected 'imports' subcommand");
-            assert!(imports_matches.get_flag("absolute"));
-        }
     }
 }
 

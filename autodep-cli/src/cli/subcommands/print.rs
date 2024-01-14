@@ -26,21 +26,7 @@ fn print_imports() -> Command {
                 .required(false)
                 .multiple(false),
         )
-        .arg(flag!("relative", "View imports as relative paths").overrides_with("absolute"))
-        .arg(
-            flag!("absolute", "View imports as absolute paths")
-                .default_value_ifs([
-                    ("relative", ArgPredicate::Equals(OsStr::default()), "true"),
-                    ("relative", ArgPredicate::IsPresent, "false"),
-                ])
-                .overrides_with("relative"),
-        )
-        .group(
-            ArgGroup::new("path-format")
-                .args(["relative", "absolute"])
-                .required(false)
-                .multiple(false),
-        )
+        .arg(flag!("relative", "View imports as relative paths"))
         .arg(flag!(
             "unique",
             "View imports for multiple targets as a unique list"

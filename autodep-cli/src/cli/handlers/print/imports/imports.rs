@@ -7,7 +7,6 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
     let target: Option<&String> = args.get_one("target");
     let targets: Option<&Vec<String>> = args.get_one("targets");
     let is_relative = args.get_flag("relative");
-    let is_absolute = args.get_flag("absolute");
     let is_unique = args.get_flag("unique");
 
     match (target, targets) {
