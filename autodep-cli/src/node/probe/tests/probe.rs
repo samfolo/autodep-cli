@@ -1,5 +1,3 @@
-extern crate tempfile;
-
 use std::{ffi::OsStr, path::PathBuf};
 use tempfile::NamedTempFile;
 
