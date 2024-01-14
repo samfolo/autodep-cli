@@ -1,4 +1,7 @@
-use clap::{Arg, ArgGroup, Command};
+use clap::{
+    builder::{ArgPredicate, OsStr},
+    Arg, ArgGroup, Command,
+};
 
 use crate::{flag, unary, unbounded};
 
@@ -20,22 +23,28 @@ fn print_imports() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
-        .arg(flag!("relative", "View imports as relative paths"))
-        .arg(flag!("absolute", "View imports as absolute paths"))
+        .arg(flag!("relative", "View imports as relative paths").overrides_with("absolute"))
+        .arg(
+            flag!("absolute", "View imports as absolute paths")
+                .default_value_ifs([
+                    ("relative", ArgPredicate::Equals(OsStr::default()), "true"),
+                    ("relative", ArgPredicate::IsPresent, "false"),
+                ])
+                .overrides_with("relative"),
+        )
         .group(
             ArgGroup::new("path-format")
                 .args(["relative", "absolute"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
-        .arg(
-            flag!(
-                "unique",
-                "View imports for multiple targets as a unique list"
-            )
-            .requires("targets"),
-        )
+        .arg(flag!(
+            "unique",
+            "View imports for multiple targets as a unique list"
+        ))
 }
 
 fn print_rule() -> Command {
@@ -47,7 +56,8 @@ fn print_rule() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!(
             "name-only",
@@ -64,7 +74,8 @@ fn print_buildfile() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!(
             "names-only",

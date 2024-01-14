@@ -14,6 +14,7 @@ pub fn untangle() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
 }

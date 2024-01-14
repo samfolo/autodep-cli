@@ -22,7 +22,8 @@ fn buildfile() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!("json", "Print as JSON"))
 }
@@ -39,7 +40,8 @@ fn rule() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!("json", "Print as JSON"))
 }

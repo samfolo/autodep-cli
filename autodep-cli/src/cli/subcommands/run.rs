@@ -14,7 +14,8 @@ pub fn run() -> Command {
         .group(
             ArgGroup::new("target-plurality")
                 .args(["target", "targets"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!("create", "Create a build file if it does not exist"))
         .arg(flag!(
@@ -24,7 +25,8 @@ pub fn run() -> Command {
         .group(
             ArgGroup::new("resolution-strategy")
                 .args(["create", "update-nearest"])
-                .required(false),
+                .required(false)
+                .multiple(false),
         )
         .arg(flag!(
             "canonicalise",

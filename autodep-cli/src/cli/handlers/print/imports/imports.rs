@@ -20,20 +20,18 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
             let imports = probe.probe(target_path, ParseMode::TypeScript);
             let imports = imports.unwrap();
 
-            let mut result: Vec<&str> = vec![];
-
             let mut result: Vec<String> = vec![];
 
             for import in &imports {
-                if is_absolute {
+                if is_relative {
+                    result.push(import.raw().to_owned());
+                } else {
                     if let Some(resolved) = import.resolved() {
                         result.push(resolved.to_owned());
                     } else {
                         let unresolvable_import = format!("{} (unresolved)", import.raw());
                         result.push(unresolvable_import);
                     }
-                } else {
-                    result.push(import.raw().to_owned());
                 }
             }
 
@@ -60,18 +58,6 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
         (Some(_), Some(_)) => {
             return Err("Specify either --target or --targets, but not both.".into());
         }
-    }
-
-    if is_relative {
-        println!("Viewing imports as relative paths");
-    }
-
-    if is_absolute {
-        println!("Viewing imports as absolute paths");
-    }
-
-    if is_unique {
-        println!("Viewing imports as a unique list");
     }
 
     Ok(())
