@@ -1,11 +1,3 @@
-use std::{ffi::OsStr, path::PathBuf};
-use tempfile::NamedTempFile;
-
-use crate::{
-    node::{parser::ParseMode, probe::probe::ModuleSpecifierProbe},
-    test_utils::files::VirtualDirectory,
-};
-
 #[test]
 fn test_probe_imports_from_file() {
     let root = VirtualDirectory::new(None).unwrap();

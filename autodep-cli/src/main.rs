@@ -8,7 +8,10 @@ fn main() {
         Some(("print", print_subcommands)) => match print_subcommands.subcommand() {
             Some(("imports", imports_subcommands)) => {
                 match handle_print_imports(imports_subcommands) {
-                    Ok(_) => std::process::exit(0),
+                    Ok(_) => {
+                        println!("Success!");
+                        std::process::exit(0)
+                    }
                     Err(e) => {
                         eprintln!("Error: {}", e);
                         std::process::exit(1);

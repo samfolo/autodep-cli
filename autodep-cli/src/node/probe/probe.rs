@@ -1,6 +1,12 @@
-use std::{path::PathBuf, rc::Rc};
+use std::{
+    env,
+    f64::consts::E,
+    path::{Path, PathBuf},
+    rc::Rc,
+};
 
-use tsconfig::{ConfigError, TsConfig};
+use clap::builder::Str;
+use tsconfig::{CompilerOptions, ConfigError, TsConfig};
 
 use crate::{
     common::parser::Parser,
@@ -19,12 +25,26 @@ impl UninitialisedModuleSpecifierProbe {
         &self,
         tsconfig_filepath: &PathBuf,
     ) -> Result<ModuleSpecifierProbe, ConfigError> {
-        let config = TsConfig::parse_file(tsconfig_filepath)?;
-        let config = Rc::new(config);
+        let mut config = TsConfig::parse_file(tsconfig_filepath)?;
+
+        let current_dir = env::current_dir()?;
+
+        if let Some(compiler_options) = &mut config.compiler_options {
+            let tsconfig_dir = tsconfig_filepath.parent().unwrap_or(&current_dir);
+            let base_url = compiler_options.base_url.clone().unwrap();
+            let absolute_base_url = tsconfig_dir.join(base_url).canonicalize()?;
+
+            compiler_options.base_url = Some(absolute_base_url.to_str().unwrap().to_string());
+        }
+
+        println!("{:#?}", config.compiler_options);
+
+        let config_rc = Rc::new(config);
+        let client = ModuleResolutionClient::new(&config_rc);
 
         Ok(ModuleSpecifierProbe {
-            config: Rc::clone(&config),
-            client: ModuleResolutionClient::new(&config),
+            config: config_rc,
+            client,
         })
     }
 

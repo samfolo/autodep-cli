@@ -1,5 +1,4 @@
-use std::{ffi::OsStr, path::PathBuf};
-use tempfile::NamedTempFile;
+use std::ffi::OsStr;
 
 use crate::{node::probe::probe::ModuleSpecifierProbe, test_utils::files::VirtualDirectory};
 
