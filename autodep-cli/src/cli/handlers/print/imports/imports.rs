@@ -1,4 +1,4 @@
-use clap::ArgMatches;
+use clap::{builder::Str, ArgMatches};
 use std::{env, path::PathBuf};
 
 use crate::node::{parser::ParseMode, probe::probe::ModuleSpecifierProbe};
@@ -12,23 +12,40 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
 
     match (target, targets) {
         (Some(target_path), None) => {
-            // TODO: delete after dev
-            let test_tsconfig_path = env::current_dir().unwrap().join("tsconfig.json");
+            // Should this have a default, or should this fail gracefully?
+            let default_tsconfig_path = env::current_dir().unwrap().join("tsconfig.json");
 
-            let probe = ModuleSpecifierProbe::new().configure_from_path(&test_tsconfig_path);
+            let probe = ModuleSpecifierProbe::new().configure_from_path(&default_tsconfig_path);
             let probe = probe.unwrap();
-            let imports = probe.probe("./test.ts", ParseMode::TypeScript);
+            let imports = probe.probe(target_path, ParseMode::TypeScript);
             let imports = imports.unwrap();
 
-            for import in imports {
-                println!("{:#?}", import);
+            let mut result: Vec<&str> = vec![];
+
+            let mut result: Vec<String> = vec![];
+
+            for import in &imports {
+                if is_absolute {
+                    if let Some(resolved) = import.resolved() {
+                        result.push(resolved.to_owned());
+                    } else {
+                        let unresolvable_import = format!("{} (unresolved)", import.raw());
+                        result.push(unresolvable_import);
+                    }
+                } else {
+                    result.push(import.raw().to_owned());
+                }
             }
-            // Load TSConfig
-            // Load file
-            // Parse imports
-            // Canonicalise
-            // Check if unique flag set
-            // Print accordingly
+
+            result.sort();
+
+            if is_unique {
+                result.dedup();
+            }
+
+            for import in result {
+                println!("{}", import);
+            }
         }
         (None, Some(target_paths)) => {
             for path in target_paths {
