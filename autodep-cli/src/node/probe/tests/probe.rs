@@ -110,24 +110,8 @@ fn test_probe_imports_from_file() {
         )
         .unwrap();
 
-    let tsconfig_path = &tree
-        .path()
-        .join("tsconfig.json")
-        .canonicalize()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string();
-
-    let source_file_path = tree
-        .path()
-        .join("src")
-        .join("randomFile.ts")
-        .canonicalize()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string();
+    let tsconfig_path = VirtualDirectory::derive_path(&tree, vec!["tsconfig.json"]);
+    let source_file_path = VirtualDirectory::derive_path(&tree, vec!["src", "randomFile.ts"]);
 
     let probe = ModuleSpecifierProbe::new().configure_from_path(&tsconfig_path.into());
     assert!(probe.is_ok());

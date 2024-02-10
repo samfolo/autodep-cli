@@ -1,0 +1,133 @@
+[
+    ExprCall {
+        range: 1..35,
+        func: Name(
+            ExprName {
+                range: 1..11,
+                id: Identifier(
+                    "subinclude",
+                ),
+                ctx: Load,
+            },
+        ),
+        args: [
+            Constant(
+                ExprConstant {
+                    range: 12..34,
+                    value: Str(
+                        "//path/to:subinclude",
+                    ),
+                    kind: None,
+                },
+            ),
+        ],
+        keywords: [],
+    },
+    ExprCall {
+        range: 53..182,
+        func: Name(
+            ExprName {
+                range: 53..62,
+                id: Identifier(
+                    "filegroup",
+                ),
+                ctx: Load,
+            },
+        ),
+        args: [],
+        keywords: [
+            Keyword {
+                range: 68..81,
+                arg: Some(
+                    Identifier(
+                        "name",
+                    ),
+                ),
+                value: Constant(
+                    ExprConstant {
+                        range: 75..81,
+                        value: Str(
+                            "test",
+                        ),
+                        kind: None,
+                    },
+                ),
+            },
+            Keyword {
+                range: 87..105,
+                arg: Some(
+                    Identifier(
+                        "srcs",
+                    ),
+                ),
+                value: List(
+                    ExprList {
+                        range: 94..105,
+                        elts: [
+                            Constant(
+                                ExprConstant {
+                                    range: 95..104,
+                                    value: Str(
+                                        "test.ts",
+                                    ),
+                                    kind: None,
+                                },
+                            ),
+                        ],
+                        ctx: Load,
+                    },
+                ),
+            },
+            Keyword {
+                range: 111..142,
+                arg: Some(
+                    Identifier(
+                        "visibility",
+                    ),
+                ),
+                value: List(
+                    ExprList {
+                        range: 124..142,
+                        elts: [
+                            Constant(
+                                ExprConstant {
+                                    range: 125..141,
+                                    value: Str(
+                                        "//some/dir/...",
+                                    ),
+                                    kind: None,
+                                },
+                            ),
+                        ],
+                        ctx: Load,
+                    },
+                ),
+            },
+            Keyword {
+                range: 148..179,
+                arg: Some(
+                    Identifier(
+                        "deps",
+                    ),
+                ),
+                value: List(
+                    ExprList {
+                        range: 155..179,
+                        elts: [
+                            Constant(
+                                ExprConstant {
+                                    range: 156..178,
+                                    value: Str(
+                                        "//some/other/dir:dep",
+                                    ),
+                                    kind: None,
+                                },
+                            ),
+                        ],
+                        ctx: Load,
+                    },
+                ),
+            },
+        ],
+    },
+]

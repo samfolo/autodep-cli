@@ -38,14 +38,7 @@ filegroup(
         )
         .unwrap();
 
-    let source_file_path = tree
-        .path()
-        .join("BUILD.plz")
-        .canonicalize()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string();
+    let source_file_path = VirtualDirectory::derive_path(&tree, vec!["BUILD.plz"]);
 
     let build_file = parser.load_and_parse(&source_file_path);
     assert!(build_file.is_ok());

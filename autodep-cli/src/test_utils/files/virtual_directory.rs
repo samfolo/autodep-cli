@@ -28,6 +28,16 @@ pub struct VirtualDirectory {
 }
 
 impl VirtualDirectory {
+    pub fn derive_path(dir: &TempDir, parts: Vec<&str>) -> String {
+        let mut path = dir.path().to_path_buf();
+        for part in parts {
+            path = path.join(part);
+        }
+
+        path.canonicalize().unwrap().to_str().unwrap().to_string()
+    }
+}
+impl VirtualDirectory {
     pub fn new(default_extension: Option<&str>) -> io::Result<Self> {
         let base_dir = TempDir::new()?;
         let base_dir = Some(base_dir);
