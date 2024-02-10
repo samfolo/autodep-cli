@@ -26,6 +26,7 @@ pub enum ModuleType {
     Local(String),
     ThirdParty(String),
     Internal(String),
+    CoreOrCustom(String),
 }
 
 impl ModuleResolutionClient {
@@ -109,6 +110,7 @@ impl ModuleResolutionClient {
                             .to_string(),
                     )),
                     FileName::Internal(i) => Ok(ModuleType::Internal(i)),
+                    FileName::Custom(c) => Ok(ModuleType::CoreOrCustom(c)),
                     t => Err(ResolverError::UnexpectedModuleType(t.to_string())),
                 })
         }

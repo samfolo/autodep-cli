@@ -41,15 +41,7 @@ impl UninitialisedModuleSpecifierProbe {
     }
 
     pub fn configure_from_str(&self, tsconfig: &str) -> Result<ModuleSpecifierProbe, ConfigError> {
-        let mut config = TsConfig::parse_str(tsconfig)?;
-        let current_dir = env::current_dir()?;
-
-        if let Some(compiler_options) = &mut config.compiler_options {
-            let base_url = compiler_options.base_url.clone().unwrap();
-            let absolute_base_url = current_dir.join(base_url).canonicalize()?;
-
-            compiler_options.base_url = Some(absolute_base_url.to_str().unwrap().to_string());
-        }
+        let config = TsConfig::parse_str(tsconfig)?;
 
         let config_rc = Rc::new(config);
         let client = ModuleResolutionClient::new(&config_rc);
@@ -63,7 +55,7 @@ impl UninitialisedModuleSpecifierProbe {
 
 #[derive(Debug)]
 pub struct ModuleSpecifierProbe {
-    config: Rc<TsConfig>,
+    pub config: Rc<TsConfig>,
     client: ModuleResolutionClient,
 }
 

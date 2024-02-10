@@ -1,10 +1,10 @@
 use clap::{builder::Str, ArgMatches};
-use std::{env, path::PathBuf};
+use std::{env, error::Error, path::PathBuf};
 
 use crate::{
     cli::handlers::common::tsconfig::resolve_tsconfig_path,
     errors::ResolverError,
-    node::{parser::ParseMode, probe::probe::ModuleSpecifierProbe},
+    node::{module_resolution::ModuleType, parser::ParseMode, probe::probe::ModuleSpecifierProbe},
 };
 
 pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
@@ -15,31 +15,7 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
 
     match (target, targets) {
         (Some(target_path), None) => {
-            let tsconfig_path = resolve_tsconfig_path(args.get_one("project"), target_path)?;
-
-            let probe = match ModuleSpecifierProbe::new().configure_from_path(&tsconfig_path) {
-                Ok(p) => p,
-                Err(e) => return Err(e.to_string().into()),
-            };
-
-            let imports = probe.probe(target_path, ParseMode::TypeScript)?;
-
-            let mut result: Vec<String> = vec![];
-            for import in &imports {
-                if is_relative {
-                    result.push(import.raw().to_owned());
-                } else {
-                    // HEREEEEEEE
-                    if let Some(resolved) = import.resolved() {
-                        result.push(resolved.to_owned());
-                    } else {
-                        let unresolvable_import = format!("{} (unresolved)", import.raw());
-                        result.push(unresolvable_import);
-                    }
-                }
-            }
-
-            result.sort();
+            let mut result = process_target(target_path, args, is_relative)?;
 
             if is_unique {
                 result.dedup();
@@ -49,12 +25,21 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
                 println!("{}", import);
             }
         }
-        (None, Some(_target_paths)) => {
-            unimplemented!();
+        (None, Some(target_paths)) => {
+            let mut result: Vec<String> = Vec::new();
 
-            // for path in target_paths {
-            //     println!("Processing target: {}", path);
-            // }
+            for target_path in target_paths {
+                let imports = process_target(target_path, args, is_relative)?;
+                result.extend(imports);
+            }
+
+            if is_unique {
+                result.dedup();
+            }
+
+            for import in result {
+                println!("{}", import);
+            }
         }
         (None, None) => {
             return Err(
@@ -67,4 +52,38 @@ pub fn handle_print_imports(args: &ArgMatches) -> Result<(), Box<dyn std::error:
     }
 
     Ok(())
+}
+
+fn process_target(
+    target_path: &String,
+    args: &ArgMatches,
+    is_relative: bool,
+) -> Result<Vec<String>, Box<dyn Error>> {
+    let tsconfig_path = resolve_tsconfig_path(args.get_one("project"), target_path)?;
+
+    let probe = ModuleSpecifierProbe::new().configure_from_path(&tsconfig_path)?;
+
+    let imports = probe.probe(target_path, ParseMode::TypeScript)?;
+
+    let mut result: Vec<String> = imports
+        .iter()
+        .map(|import| {
+            if is_relative {
+                import.raw().to_owned()
+            } else if let Some(resolved) = import.resolved() {
+                match resolved {
+                    ModuleType::Local(specifier)
+                    | ModuleType::ThirdParty(specifier)
+                    | ModuleType::Internal(specifier)
+                    | ModuleType::CoreOrCustom(specifier) => specifier.clone(),
+                }
+            } else {
+                format!("{} (unresolved)", import.raw())
+            }
+        })
+        .collect();
+
+    result.sort();
+
+    Ok(result)
 }
