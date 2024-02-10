@@ -1,17 +1,15 @@
-extern crate tempfile;
-
 use std::io::Write;
 use tempfile::NamedTempFile;
 
 use crate::{
     common::parser::Parser,
-    node::parser::TypeScriptParser,
+    python::parser::PythonParser,
     test_utils::files::{ItemConfig, TreeConfig, VirtualDirectory},
 };
 
 #[test]
-fn test_parse_typescript_file() {
-    let parser = TypeScriptParser::new();
+fn test_parse_build_file() {
+    let parser = PythonParser::new();
 
     let mut root = VirtualDirectory::new(None).unwrap();
 
@@ -22,9 +20,19 @@ fn test_parse_typescript_file() {
             &base_dir,
             &TreeConfig {
                 items: vec![ItemConfig::File {
-                    name: "test".to_string(),
-                    extension: Some("ts".to_string()),
-                    content: Some(r#"let x: number = 10;"#.to_string()),
+                    name: "BUILD".to_string(),
+                    extension: Some("plz".to_string()),
+                    content: Some(
+                        r#"subinclude("//path/to:subinclude")
+                
+filegroup(
+    name = "test",
+    srcs = ["test.ts"],
+    visibility = ["//some/dir/..."],
+    deps = ["//some/other/dir:dep"],
+)"#
+                        .to_string(),
+                    ),
                 }],
             },
         )
@@ -32,7 +40,7 @@ fn test_parse_typescript_file() {
 
     let source_file_path = tree
         .path()
-        .join("test.ts")
+        .join("BUILD.plz")
         .canonicalize()
         .unwrap()
         .to_str()
@@ -40,8 +48,8 @@ fn test_parse_typescript_file() {
         .to_string();
 
     match parser.load_and_parse(&source_file_path) {
-        Ok(_module) => {
-            // println!("{:#?}", module) // works! finish test later..
+        Ok(build_file) => {
+            // println!("{:#?}", build_file) // works! finish test later..
         }
         Err(e) => panic!("Failed to parse TypeScript content: {:?}", e),
     }

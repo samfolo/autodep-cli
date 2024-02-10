@@ -1,8 +1,0 @@
-{
-    "compilerOptions": {
-        "baseUrl": "./",
-        "paths": {
-            "@alias/*": ["./src/aliased/modules/*"]
-        }
-    }
-}

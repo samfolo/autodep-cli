@@ -1,7 +1,0 @@
-{
-    "name": "fixture-001",
-    "private": true,
-    "dependencies": {
-        "some-node-module": "0.0.0"
-    }
-}

@@ -11,7 +11,6 @@ fn test_probe_imports_from_file() {
 
     let base_dir = root.base_dir().path().to_str().unwrap().to_string();
 
-    println!("Base dir: {}", base_dir);
     let tree = root
         .create_tree(
             &base_dir,
